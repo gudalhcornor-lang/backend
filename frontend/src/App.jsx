@@ -1,35 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import AddAdmin from "./pages/AddAdmin";
+import Login from "./pages/Login";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+function Home() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h1>Aplikasi Katalog Box Speaker</h1>
+      <p>Gunakan menu di atas untuk menambah admin atau login.</p>
+    </div>
+  );
 }
 
-export default App
+function App() {
+  return (
+    <Router>
+      {/* Navigasi sederhana */}
+      <nav
+        style={{
+          padding: "10px",
+          background: "#f3f3f3",
+          textAlign: "center",
+          marginBottom: "20px",
+        }}
+      >
+        <Link to="/" style={{ marginRight: "15px" }}>
+          Beranda
+        </Link>
+        <Link to="/add-admin" style={{ marginRight: "15px" }}>
+          Tambah Admin
+        </Link>
+        <Link to="/login">Login Admin</Link>
+      </nav>
+
+      {/* Routing Halaman */}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/add-admin" element={<AddAdmin />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
