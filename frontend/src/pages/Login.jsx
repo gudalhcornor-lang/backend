@@ -1,35 +1,90 @@
-import React, { useState } from 'react'
-import api, { setToken } from '../api'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function Login(){
-  const [email,setEmail] = useState('')
-  const [password,setPassword] = useState('')
-  const [error,setError] = useState('')
-  const nav = useNavigate()
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const submit = async (e) => {
-    e.preventDefault()
-    try{
-      const res = await api.post('/login',{email,password})
-      const token = res.data.token
-      localStorage.setItem('token',token)
-      setToken(token)
-      nav('/')
-    }catch(err){
-      setError(err.response?.data?.message || 'Gagal login')
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || "Login gagal");
+        return;
+      }
+
+      // Simpan token
+      localStorage.setItem("token", data.token);
+
+      // Ambil data user untuk cek role
+      const meResponse = await fetch("http://127.0.0.1:8000/api/me", {
+        headers: {
+          Authorization: `Bearer ${data.token}`,
+          Accept: "application/json",
+        },
+      });
+
+      const user = await meResponse.json();
+
+      if (user.role === "admin") {
+        navigate("/add-speaker");
+      } else {
+        navigate("/list-speaker");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Terjadi kesalahan koneksi.");
     }
-  }
+  };
 
   return (
-    <div style={{maxWidth:400, margin:'2rem auto'}}>
-      <h2>Login Admin</h2>
-      <form onSubmit={submit}>
-        <input placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} required/><br/>
-        <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} required/><br/>
-        <button type="submit">Masuk</button>
-        {error && <p style={{color:'red'}}>{error}</p>}
+    <div style={{ width: "300px", margin: "100px auto", textAlign: "center" }}>
+      <h2>Login Admin / User</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <form onSubmit={handleLogin}>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+          required
+        />
+        <button
+          type="submit"
+          style={{
+            width: "100%",
+            padding: "8px",
+            backgroundColor: "#007bff",
+            color: "white",
+            border: "none",
+          }}
+        >
+          Login
+        </button>
       </form>
     </div>
-  )
+  );
 }
+
+export default Login;

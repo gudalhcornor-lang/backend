@@ -10,27 +10,19 @@ class AdminController extends Controller
 {
     public function addAdmin(Request $request)
     {
-        // Pastikan hanya admin yang bisa menambahkan admin baru
-        if ($request->user()->role !== 'admin') {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
+            'name' => 'required|string',
+            'email' => 'required|string|email|unique:users',
+            'password' => 'required|string|min:6',
         ]);
 
-        $admin = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'admin',
-        ]);
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->role = 'admin';
+        $user->save();
 
-        return response()->json([
-            'message' => 'Admin berhasil ditambahkan!',
-            'admin' => $admin
-        ], 201);
+        return response()->json(['message' => 'Admin berhasil ditambahkan', 'data' => $user]);
     }
 }
