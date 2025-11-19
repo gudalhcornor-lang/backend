@@ -15,6 +15,11 @@ class SpeakerBoxController extends Controller
 
     public function store(Request $request)
     {
+        // hanya admin boleh menambah (cek role)
+        if ($request->user()->role !== 'admin') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         $data = $request->validate([
             'nama' => 'required|string|max:255',
             'ukuran' => 'required|string|max:100',
@@ -29,16 +34,21 @@ class SpeakerBoxController extends Controller
             $data['gambar'] = $path;
         }
 
-        return SpeakerBox::create($data);
+        $speaker = SpeakerBox::create($data);
+        return response()->json($speaker, 201);
     }
 
-    public function show(SpeakerBox $speakerBox)
+    public function show(SpeakerBox $speaker)
     {
-        return $speakerBox;
+        return $speaker;
     }
 
-    public function update(Request $request, SpeakerBox $speakerBox)
+    public function update(Request $request, SpeakerBox $speaker)
     {
+        if ($request->user()->role !== 'admin') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         $data = $request->validate([
             'nama' => 'required|string|max:255',
             'ukuran' => 'required|string|max:100',
@@ -49,23 +59,27 @@ class SpeakerBoxController extends Controller
         ]);
 
         if ($request->hasFile('gambar')) {
-            if ($speakerBox->gambar) {
-                Storage::disk('public')->delete($speakerBox->gambar);
+            if ($speaker->gambar) {
+                Storage::disk('public')->delete($speaker->gambar);
             }
             $path = $request->file('gambar')->store('speakers', 'public');
             $data['gambar'] = $path;
         }
 
-        $speakerBox->update($data);
-        return $speakerBox;
+        $speaker->update($data);
+        return response()->json($speaker);
     }
 
-    public function destroy(SpeakerBox $speakerBox)
+    public function destroy(Request $request, SpeakerBox $speaker)
     {
-        if ($speakerBox->gambar) {
-            Storage::disk('public')->delete($speakerBox->gambar);
+        if ($request->user()->role !== 'admin') {
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
-        $speakerBox->delete();
+
+        if ($speaker->gambar) {
+            Storage::disk('public')->delete($speaker->gambar);
+        }
+        $speaker->delete();
         return response()->json(['message' => 'Deleted']);
     }
 }
