@@ -15,7 +15,7 @@ class SpeakerBoxController extends Controller
 
     public function store(Request $request)
     {
-        // hanya admin boleh menambah (cek role)
+        // hanya admin boleh menambah (cek role masing)
         if ($request->user()->role !== 'admin') {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
