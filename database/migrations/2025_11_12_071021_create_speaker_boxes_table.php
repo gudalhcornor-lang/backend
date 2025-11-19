@@ -8,10 +8,10 @@ return new class extends Migration {
     public function up() {
         Schema::create('speaker_boxes', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->string('ukuran');
-            $table->string('bahan');
-            $table->integer('harga');
+            $table->string('nama')->nullable();
+            $table->string('ukuran')->nullable();
+            $table->string('bahan')->nullable();
+            $table->bigInteger('harga')->nullable();
             $table->string('gambar')->nullable();
             $table->text('deskripsi')->nullable();
             $table->timestamps();
