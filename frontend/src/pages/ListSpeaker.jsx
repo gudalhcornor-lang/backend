@@ -65,9 +65,9 @@ export default function ListSpeaker() {
                 {s.nama}
               </h3>
 
-              <p><b>Ukuran:</b> {s.ukuran}</p>
+              <p><b></b> {s.ukuran}</p>
               <p>
-                <b>Harga:</b>{' '}
+                <b></b>{' '}
                 <span style={{ color: 'green', fontWeight: 'bold' }}>
                   Rp {s.harga.toLocaleString()}
                 </span>
