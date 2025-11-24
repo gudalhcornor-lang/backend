@@ -110,7 +110,7 @@ export default function ListSpeakerAdmin() {
       {/* ======================== BODY ======================== */}
       <div className="page">
         <div className="top-bar">
-          <div className="title">Tabel Produk Box Speaker</div>
+          <div className="title">Produk Box Speaker</div>
         </div>
 
         <table>

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api, { imgUrl } from '../api';
 import MainLayout from "../layout/MainLayout";
 
 export default function ListSpeaker() {
   const [speakers, setSpeakers] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     api.get('/speakers').then((res) => setSpeakers(res.data));
@@ -12,7 +13,6 @@ export default function ListSpeaker() {
 
   return (
     <MainLayout>
-
       <div style={{ padding: '40px', fontFamily: 'Arial' }}>
         <h2
           style={{
@@ -36,6 +36,7 @@ export default function ListSpeaker() {
           {speakers.map((s) => (
             <div
               key={s.id}
+              onClick={() => navigate(`/detail-speaker/${s.id}`)} // klik card → navigate
               style={{
                 background: '#ffffff',
                 borderRadius: '16px',
@@ -45,6 +46,7 @@ export default function ListSpeaker() {
                 display: 'flex',
                 flexDirection: 'column',
                 transition: '0.2s',
+                cursor: 'pointer', // beri pointer agar terlihat bisa diklik
               }}
             >
               <img
@@ -70,29 +72,10 @@ export default function ListSpeaker() {
                   Rp {s.harga.toLocaleString()}
                 </span>
               </p>
-
-              <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
-                <Link
-                  to={`/detail-speaker/${s.id}`}
-                  style={{
-                    flex: 1,
-                    background: '#007bff',
-                    color: 'white',
-                    textAlign: 'center',
-                    padding: '8px',
-                    borderRadius: '8px',
-                    textDecoration: 'none',
-                  }}
-                >
-                  Detail
-                </Link>
-              </div>
-
             </div>
           ))}
         </div>
       </div>
-
     </MainLayout>
   );
 }
