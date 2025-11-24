@@ -145,7 +145,7 @@ function Login() {
           onClick={() => navigate("/register")}
           style={registerButtonStyle}
         >
-          Register User
+          Register
         </button>
       </div>
     </div>
