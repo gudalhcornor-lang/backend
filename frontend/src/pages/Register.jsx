@@ -1,62 +1,53 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+export default function Register() {
   const navigate = useNavigate();
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
 
-  const handleLogin = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/login", {
+      const res = await fetch("http://127.0.0.1:8000/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          ...form,
+          role: "user",
+        }),
       });
 
-      const data = await response.json();
+      const data = await res.json();
 
-      if (!response.ok) {
-        setError(data.message || "Login gagal");
+      if (!res.ok) {
+        setError(data.message || "Registrasi gagal");
         return;
       }
 
-      localStorage.setItem("token", data.token);
-
-      const meResponse = await fetch("http://127.0.0.1:8000/api/me", {
-        headers: {
-          Authorization: `Bearer ${data.token}`,
-          Accept: "application/json",
-        },
-      });
-
-      const user = await meResponse.json();
-
-      if (user.role === "admin") {
-        navigate("/list-speakeradmin");
-      } else {
-        navigate("/list-speaker");
-      }
+      alert("Registrasi berhasil! Silakan login.");
+      navigate("/");
     } catch (err) {
       console.error(err);
       setError("Terjadi kesalahan koneksi.");
     }
   };
 
-  // --- STYLE ---
+  // === STYLE ===
   const containerStyle = {
-    width: "100vw",
-    height: "100vh",
+    width: "100%",
+    minHeight: "100vh",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     background: "linear-gradient(135deg, #1f1c2c, #928dab)",
-    margin: 0,
-    padding: 0,
+    padding: "20px",
   };
 
   const cardStyle = {
@@ -75,14 +66,13 @@ function Login() {
     borderRadius: "8px",
     border: "1px solid #dcdcdc",
     fontSize: "15px",
-    boxSizing: "border-box",
   };
 
   const buttonStyle = {
     width: "100%",
     padding: "10px",
     borderRadius: "8px",
-    backgroundColor: "#4e54c8",
+    backgroundColor: "#28a745",
     color: "white",
     border: "none",
     fontSize: "16px",
@@ -91,16 +81,18 @@ function Login() {
     transition: "0.3s",
   };
 
-  const registerButtonStyle = {
+  const loginButtonStyle = {
     ...buttonStyle,
-    backgroundColor: "#28a745",
+    backgroundColor: "#4e54c8",
     marginTop: "12px",
   };
 
   return (
     <div style={containerStyle}>
       <div style={cardStyle}>
-        <h2 style={{ marginBottom: "20px", color: "#333" }}>Login</h2>
+        <h2 style={{ marginBottom: "20px", color: "#333" }}>
+          Register User
+        </h2>
 
         {error && (
           <p style={{ color: "red", marginBottom: "15px", fontSize: "14px" }}>
@@ -108,48 +100,48 @@ function Login() {
           </p>
         )}
 
-        <form
-          onSubmit={handleLogin}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "12px",
-            width: "100%",
-          }}
-        >
+        <form onSubmit={submit}>
+          <input
+            type="text"
+            placeholder="Nama Lengkap"
+            style={inputStyle}
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            required
+          />
+
           <input
             type="email"
             placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             style={inputStyle}
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
             required
           />
 
           <input
             type="password"
             placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             style={inputStyle}
+            value={form.password}
+            onChange={(e) =>
+              setForm({ ...form, password: e.target.value })
+            }
             required
           />
 
           <button type="submit" style={buttonStyle}>
-            Login
+            Daftar
           </button>
         </form>
 
         <button
-          onClick={() => navigate("/register")}
-          style={registerButtonStyle}
+          onClick={() => navigate("/")}
+          style={loginButtonStyle}
         >
-          Register User
+          Kembali ke Login
         </button>
       </div>
     </div>
   );
 }
-
-export default Login;

@@ -9,6 +9,6 @@ export const setToken = (token) => {
   else delete api.defaults.headers.common['Authorization'];
 };
 
-export const imgUrl = (path) => `http://127.0.0.1:8000/storage/${path}`;
+export const imgUrl = (path) => `http://127.0.0.1:8000/img/${path}`;
 
 export default api;

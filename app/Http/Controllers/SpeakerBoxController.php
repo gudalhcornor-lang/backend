@@ -15,7 +15,6 @@ class SpeakerBoxController extends Controller
 
     public function store(Request $request)
     {
-        // hanya admin boleh menambah (cek role masing)
         if ($request->user()->role !== 'admin') {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
@@ -29,9 +28,13 @@ class SpeakerBoxController extends Controller
             'gambar' => 'nullable|image|max:2048'
         ]);
 
+        // === FIX UPLOAD GAMBAR ===
         if ($request->hasFile('gambar')) {
-            $path = $request->file('gambar')->store('speakers', 'public');
-            $data['gambar'] = $path;
+            $filename = time() . '.' . $request->file('gambar')->extension();
+            $request->file('gambar')->move(public_path('img'), $filename);
+
+            // hanya simpan nama file
+            $data['gambar'] = $filename;
         }
 
         $speaker = SpeakerBox::create($data);
@@ -58,12 +61,18 @@ class SpeakerBoxController extends Controller
             'gambar' => 'nullable|image|max:2048'
         ]);
 
+        // === FIX UPDATE GAMBAR ===
         if ($request->hasFile('gambar')) {
-            if ($speaker->gambar) {
-                Storage::disk('public')->delete($speaker->gambar);
+
+            // hapus file lama jika ada
+            if ($speaker->gambar && file_exists(public_path('img/' . $speaker->gambar))) {
+                unlink(public_path('img/' . $speaker->gambar));
             }
-            $path = $request->file('gambar')->store('speakers', 'public');
-            $data['gambar'] = $path;
+
+            $filename = time() . '.' . $request->file('gambar')->extension();
+            $request->file('gambar')->move(public_path('img'), $filename);
+
+            $data['gambar'] = $filename;
         }
 
         $speaker->update($data);
@@ -76,9 +85,11 @@ class SpeakerBoxController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        if ($speaker->gambar) {
-            Storage::disk('public')->delete($speaker->gambar);
+        // panggil file lama dan hapus
+        if ($speaker->gambar && file_exists(public_path('img/' . $speaker->gambar))) {
+            unlink(public_path('img/' . $speaker->gambar));
         }
+
         $speaker->delete();
         return response()->json(['message' => 'Deleted']);
     }
