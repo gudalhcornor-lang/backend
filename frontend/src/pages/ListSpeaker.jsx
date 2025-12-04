@@ -154,7 +154,7 @@ export default function ListSpeaker() {
           }
           .hero-search input{border:none;outline:none;font-size:15px;background:transparent;flex:1}
 
-          .hero-art{width:260px;height:140px;border-radius:12px;object-fit:cover}
+          .hero-art{width:260px;height:140px;border-radius:12px;object-fit:contain}
 
           .controls{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:18px 0}
           .filters{display:flex;gap:8px;flex-wrap:wrap}
@@ -250,7 +250,7 @@ export default function ListSpeaker() {
 
           <img
             className="hero-art"
-            src="http://127.0.0.1:8000/img/cap.jpeg"
+            src="http://127.0.0.1:8000/img/cap.png"
             alt="hero"
           />
         </div>
