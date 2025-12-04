@@ -11,7 +11,7 @@ import EditSpeaker from "./pages/EditSpeaker";
 import ListSpeaker from "./pages/ListSpeaker";
 import ListSpeakerAdmin from "./pages/ListSpeakerAdmin";   // ✅ WAJIB DIIMPORT
 import Wishlist from "./pages/Wishlist"; 
-
+import SearchSpeakerResult from "./pages/SearchSpeakerResult";
 function App() {
 
   // LOAD TOKEN SAAT APLIKASI PERTAMA DIBUKA
@@ -40,6 +40,7 @@ function App() {
         <Route path="/list-speaker" element={<ListSpeaker />} />
         <Route path="/wishlist" element={<Wishlist />} />
    <Route path="/Register" element={<Register />} />
+   <Route path="/search-speaker" element={<SearchSpeakerResult />} />
       </Routes>
     </Router>
   );

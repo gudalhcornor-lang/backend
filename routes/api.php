@@ -5,24 +5,49 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\SpeakerBoxController;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\RatingController;
 
 /*
-| API routes
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
 */
 
-// public
+// Public (tanpa login)
 Route::get('/health', fn() => response()->json(['status' => 'ok']));
-Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-// admin create (butuh token + role check inside controller)
+// Rekomendasi produk public
+Route::get('/speakers/{id}/related', [SpeakerBoxController::class, 'related']);
+
+// Admin create (butuh login)
 Route::middleware('auth:sanctum')->post('/admin/add', [AdminController::class, 'addAdmin']);
 
-// protected routes (need sanctum)
+// Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('me', [AuthController::class, 'me']);
-    Route::post('logout', [AuthController::class, 'logout']);
 
-    // resource speakers
-    Route::apiResource('speakers', SpeakerBoxController::class);
+    // Auth
+    Route::get('/me', [AuthController::class, 'me']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    // CRUD Speakers
+    Route::apiResource('/speakers', SpeakerBoxController::class);
+Route::get('/speakers/{id}/related', [SpeakerBoxController::class, 'related']);
+
+    // ---------------------------
+    // ⭐ RATING ROUTES (diperbaiki)
+    // ---------------------------
+   // ⭐ Rating
+Route::post('/rating', [RatingController::class, 'store']);
+Route::get('/rating/my/{id}', [RatingController::class, 'myRating']);
+Route::get('/rating/product/{id}', [RatingController::class, 'productRatings']);
+
+    // Wishlist
+    Route::get('/wishlist', [WishlistController::class, 'index']);
+    Route::post('/wishlist', [WishlistController::class, 'store']);
+    Route::delete('/wishlist/{id}', [WishlistController::class, 'destroy']);
+    Route::get('/speakers/search', [SpeakerController::class, 'search']);
+
 });

@@ -33,7 +33,6 @@ export default function AddSpeaker() {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      alert("Produk berhasil ditambahkan!");
       nav('/list-speakeradmin');
 
     } catch (error) {
@@ -45,7 +44,6 @@ export default function AddSpeaker() {
   return (
     <AdminLayout>
       <>
-        {/* ===================== CSS DALAM 1 FILE ===================== */}
         <style>{`
           .add-speaker-page {
             min-height: 100vh;
@@ -113,6 +111,24 @@ export default function AddSpeaker() {
             box-shadow: 0 0 0 4px rgba(49, 130, 206, 0.25);
             outline: none;
           }
+
+          /* STYLE SELECT */
+          .select-input {
+            padding: 12px 16px;
+            border: 1px solid #cbd5e0;
+            border-radius: 12px;
+            font-size: 16px;
+            color: #2d3748;
+            background-color: #f7fafc;
+            transition: border 0.2s, box-shadow 0.2s;
+          }
+
+          .select-input:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 4px rgba(49, 130, 206, 0.25);
+            outline: none;
+          }
+
           .image-preview img {
             max-width: 200px;
             max-height: 200px;
@@ -122,7 +138,6 @@ export default function AddSpeaker() {
             border: 1px solid #e2e8f0;
           }
 
-          /* BUTTON SIMPAN */
           .btn-save {
             background-color: #3182ce;
             color: white;
@@ -139,7 +154,6 @@ export default function AddSpeaker() {
             transform: translateY(-2px);
           }
 
-          /* BUTTON BATAL */
           .btn-cancel {
             background-color: #cbd5e1;
             color: #1e293b;
@@ -165,7 +179,6 @@ export default function AddSpeaker() {
 
         `}</style>
 
-        {/* ===================== HTML FORM ===================== */}
         <div className="add-speaker-page">
           <div className="form-card">
             <h1 className="form-title">Tambah Box Speaker</h1>
@@ -185,12 +198,17 @@ export default function AddSpeaker() {
 
                 <div className="form-group">
                   <label>Ukuran</label>
-                  <input
-                    type="text"
-                    placeholder="Ukuran"
+                  <select
+                    className="select-input"
                     onChange={(e) => setForm({ ...form, ukuran: e.target.value })}
                     required
-                  />
+                  >
+                    <option value="">-- Pilih Ukuran --</option>
+                    <option value="10 inch">10 inch</option>
+                    <option value="12 inch">12 inch</option>
+                    <option value="15 inch">15 inch</option>
+                    <option value="18 inch">18 inch</option>
+                  </select>
                 </div>
               </div>
 
@@ -235,7 +253,6 @@ export default function AddSpeaker() {
                 )}
               </div>
 
-              {/* BUTTON ROW */}
               <div className="btn-row">
                 <button
                   type="button"
