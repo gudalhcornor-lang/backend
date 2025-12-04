@@ -44,7 +44,7 @@ export default function Navbar() {
       <div style={{ display: "flex", gap: "12px" }}>
         {navItem("/list-speaker", "Home")}
         {navItem("/wishlist", "Wishlist")}
-      
+       {navItem("/", "Logout")}
       </div>
     </nav>
   );

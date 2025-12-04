@@ -46,7 +46,7 @@ export default function EditSpeaker() {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
-    alert("Produk berhasil di-update!");
+    
     nav("/list-speakeradmin");
   };
 

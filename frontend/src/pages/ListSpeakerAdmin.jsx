@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api, { imgUrl } from "../api";
 import AdminLayout from "../layout/AdminLayout";
+
 export default function ListSpeakerAdmin() {
   const [speakers, setSpeakers] = useState([]);
   const navigate = useNavigate();
@@ -14,141 +15,157 @@ export default function ListSpeakerAdmin() {
       return;
     }
 
-    api.get("/speakers")
-      .then((res) => setSpeakers(res.data))
+    api.get("/speakers").then((res) => setSpeakers(res.data));
   }, []);
 
   const hapus = async (id) => {
-    if (!confirm("Yakin ingin menghapus produk ini?")) return;
+
     await api.delete(`/speakers/${id}`);
     setSpeakers(speakers.filter((x) => x.id !== id));
   };
 
   return (
-     <AdminLayout>
-    <>
-      {/* ======================== CSS ======================== */}
-      <style>{`
-        .page {
-          padding: 40px;
-          background: #f5f7fa;
-          min-height: 100vh;
-        }
-        .top-bar {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 25px;
-        }
-        .title {
-          font-size: 30px;
-          font-weight: 700;
-          color: #2d3748;
-        }
-        .btn-add {
-          padding: 10px 20px;
-          background: #3182ce;
-          color: white;
-          border: none;
-          border-radius: 10px;
-          cursor: pointer;
-          font-size: 16px;
-        }
-        .btn-add:hover { background: #2b6cb0; }
+    <AdminLayout>
+      <>
+        {/* ======================== CSS ======================== */}
+        <style>{`
+          .page {
+            padding: 40px;
+            background: #f5f7fa;
+            min-height: 100vh;
+          }
 
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          background: white;
-          border-radius: 12px;
-          overflow: hidden;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
+          .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+          }
 
-        thead {
-          background: #e2e8f0;
-        }
+          .title {
+            font-size: 30px;
+            font-weight: 700;
+            color: #2d3748;
+          }
 
-        th, td {
-          padding: 14px 18px;
-          border-bottom: 1px solid #e2e8f0;
-          font-size: 15px;
-          text-align: left;
-        }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+          }
 
-        th {
-          font-weight: 700;
-          color: #2d3748;
-        }
+          thead {
+            background: #e2e8f0;
+          }
 
-        tbody tr:hover {
-          background: #f7fafc;
-        }
+          th, td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 15px;
+            text-align: left;
+          }
 
-        .img-thumb {
-          width: 70px;
-          height: 70px;
-          object-fit: cover;
-          border-radius: 8px;
-          border: 1px solid #ddd;
-        }
+          th {
+            font-weight: 700;
+            color: #2d3748;
+          }
 
-        .btn-edit {
-          color: #2b6cb0;
-          font-weight: 600;
-          cursor: pointer;
-          margin-right: 15px;
-        }
+          tbody tr:hover {
+            background: #f7fafc;
+          }
 
-        .btn-delete {
-          color: #e53e3e;
-          font-weight: 600;
-          cursor: pointer;
-        }
-      `}</style>
+          .img-thumb {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+          }
 
-      {/* ======================== BODY ======================== */}
-      <div className="page">
-        <div className="top-bar">
-          <div className="title">Produk Box Speaker</div>
-        </div>
+          /* ==== BUTTON STYLE ==== */
+          .btn-action {
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+            margin-right: 8px;
+          }
 
-        <table>
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Gambar</th>
-              <th>Nama</th>
-              <th>Ukuran</th>
-              <th>Harga</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
+          .btn-edit {
+            background: #3182ce;
+            color: white;
+          }
+          .btn-edit:hover {
+            background: #2563eb;
+          }
 
-          <tbody>
-            {speakers.map((s, i) => (
-              <tr key={s.id}>
-                <td>{i + 1}</td>
-                <td>
-                  {s.gambar && <img src={imgUrl(s.gambar)} className="img-thumb" />}
-                </td>
-                <td>{s.nama}</td>
-                <td>{s.ukuran}</td>
-                <td>Rp {s.harga.toLocaleString()}</td>
-                <td>
-                  <Link className="btn-edit" to={`/edit-speaker/${s.id}`}>
-                    Edit
-                  </Link>
-                  <span className="btn-delete" onClick={() => hapus(s.id)}>
-                    Hapus
-                  </span>
-                </td>
+          .btn-delete {
+            background: #e53e3e;
+            color: white;
+          }
+          .btn-delete:hover {
+            background: #c53030;
+          }
+        `}</style>
+
+        {/* ======================== BODY ======================== */}
+        <div className="page">
+          <div className="top-bar">
+            <div className="title">Produk Box Speaker</div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Gambar</th>
+                <th>Nama</th>
+                <th>Ukuran</th>
+                <th>Harga</th>
+                <th>Deskripsi</th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </>
-     </AdminLayout>
+            </thead>
+
+            <tbody>
+              {speakers.map((s, i) => (
+                <tr key={s.id}>
+                  <td>{i + 1}</td>
+
+                  <td>
+                    {s.gambar && (
+                      <img src={imgUrl(s.gambar)} className="img-thumb" />
+                    )}
+                  </td>
+
+                  <td>{s.nama}</td>
+                  <td>{s.ukuran}</td>
+                  <td>Rp {s.harga.toLocaleString()}</td>
+                   <td>{s.deskripsi}</td>
+                  <td>
+                    <Link to={`/edit-speaker/${s.id}`}>
+                      <button className="btn-action btn-edit">Edit</button>
+                    </Link>
+
+                    <button
+                      className="btn-action btn-delete"
+                      onClick={() => hapus(s.id)}
+                    >
+                      Hapus
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </>
+    </AdminLayout>
   );
 }

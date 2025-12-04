@@ -1,24 +1,39 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { imgUrl } from "../api";
+import api from "../api";
 import MainLayout from "../layout/MainLayout";
 
 export default function Wishlist() {
   const [wishlist, setWishlist] = useState([]);
   const navigate = useNavigate();
 
+  // 🔥 Ambil wishlist dari database
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("wishlist")) || [];
-    setWishlist(data);
+    api
+      .get("/wishlist")
+      .then((res) => setWishlist(res.data))
+      .catch((err) => console.error("Error fetch wishlist:", err));
   }, []);
 
-  const removeItem = (id) => {
-    const updated = wishlist.filter((item) => item.id !== id);
-    setWishlist(updated);
-    localStorage.setItem("wishlist", JSON.stringify(updated));
+  // 🔥 Hapus item dari wishlist (berdasarkan speaker_id)
+  const removeItem = async (speakerId) => {
+    try {
+      await api.delete(`/wishlist/${speakerId}`);
+
+      // Hapus hanya item yang memiliki speaker_id tersebut
+      setWishlist((prev) =>
+        prev.filter((item) => item.speaker.id !== speakerId)
+      );
+    } catch (err) {
+      console.error("Gagal hapus wishlist:", err);
+    }
   };
 
-  const totalHarga = wishlist.reduce((t, item) => t + item.harga, 0);
+  const totalHarga = wishlist.reduce(
+    (total, item) => total + item.speaker.harga,
+    0
+  );
 
   return (
     <MainLayout>
@@ -28,7 +43,6 @@ export default function Wishlist() {
             width: 94vw;
             min-height: calc(100vh - 80px);
             background: #f8fafc;
-            box-sizing: border-box;
             display: flex;
             justify-content: center;
             padding: 1px;
@@ -39,7 +53,6 @@ export default function Wishlist() {
             background: white;
             border-radius: 14px;
             padding: 20px;
-            box-sizing: border-box;
             border: 1px solid #e2e8f0;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
           }
@@ -123,19 +136,6 @@ export default function Wishlist() {
           .back-btn:hover {
             background: #334155;
           }
-
-          @media (max-width: 900px) {
-            .wishlist-box {
-              padding: 15px;
-            }
-            table, th, td {
-              font-size: 14px;
-            }
-            .prod-img {
-              width: 50px;
-              height: 50px;
-            }
-          }
         `}</style>
 
         <div className="wishlist-container">
@@ -143,7 +143,13 @@ export default function Wishlist() {
             <h1 className="title">Wishlist Saya</h1>
 
             {wishlist.length === 0 ? (
-              <p style={{ textAlign: "center", color: "#64748b", padding: "20px" }}>
+              <p
+                style={{
+                  textAlign: "center",
+                  color: "#64748b",
+                  padding: "20px",
+                }}
+              >
                 Wishlist masih kosong.
               </p>
             ) : (
@@ -151,9 +157,9 @@ export default function Wishlist() {
                 <table>
                   <thead>
                     <tr>
-                      <th>Produk</th>
+                      <th>Nama Produk</th>
                       <th>Harga</th>
-                      <th>Aksi</th>
+                      <th></th>
                     </tr>
                   </thead>
 
@@ -163,21 +169,23 @@ export default function Wishlist() {
                         <td>
                           <div className="prod-info">
                             <img
-                              src={imgUrl(item.gambar)}
-                              alt={item.nama}
+                              src={imgUrl(item.speaker.gambar)}
+                              alt={item.speaker.nama}
                               className="prod-img"
-                              onClick={() => navigate(`/detail-speaker/${item.id}`)}
+                              onClick={() =>
+                                navigate(`/detail-speaker/${item.speaker.id}`)
+                              }
                             />
-                            <span>{item.nama}</span>
+                            <span>{item.speaker.nama}</span>
                           </div>
                         </td>
 
-                        <td>Rp {item.harga.toLocaleString()}</td>
+                        <td>Rp {item.speaker.harga.toLocaleString()}</td>
 
                         <td>
                           <button
                             className="remove-btn"
-                            onClick={() => removeItem(item.id)}
+                            onClick={() => removeItem(item.speaker.id)}
                           >
                             Hapus
                           </button>
@@ -192,7 +200,10 @@ export default function Wishlist() {
                 </div>
 
                 <div style={{ textAlign: "center" }}>
-                  <button className="back-btn" onClick={() => navigate("/list-speaker")}>
+                  <button
+                    className="back-btn"
+                    onClick={() => navigate("/list-speaker")}
+                  >
                     ← Kembali
                   </button>
                 </div>
